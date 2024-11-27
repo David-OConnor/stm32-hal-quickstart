@@ -8,10 +8,14 @@
 #![no_main]
 #![no_std]
 
-use core::sync::atomic::{AtomicU32, Ordering};
+use core::{
+    cell::RefCell,
+    sync::atomic::Ordering,
+};
 
 use cortex_m::{self};
-use cortex_m_rt::{entry, interrupt};
+use cortex_m_rt::{entry};
+use critical_section::{with, Mutex};
 use defmt::println;
 // These lines are part of our setup for debug printing.
 use defmt_rtt as _;
@@ -22,19 +26,17 @@ use hal::{
     flash::{Bank, Flash},
     gpio::Pin,
     low_power, make_globals,
-    pac::{self, TIM1, TIM2},
-    timer,
-    timer::Timer,
+    pac::{self, interrupt, TIM15, TIM2},
+    timer::{self, Timer, TICK_OVERFLOW_COUNT},
 };
 use panic_probe as _;
-
 mod init;
 mod setup;
 mod system_status;
 
 make_globals!(
     (FLASH, Flash),
-    (TICK_TIMER, Timer<TIM3>),
+    (TICK_TIMER, Timer<TIM15>),
     (MAIN_LOOP_TIMER, Timer<TIM2>),
     // (USB_DEV, UsbDevice<'static, UsbBusType>),
     // (USB_SERIAL, SerialPort<'static, UsbBusType>),
@@ -47,7 +49,6 @@ const FLASH_PAGE_ONBOARD: usize = 63;
 // We use a hardware counter to measure relative system time. This is the number of times
 // it has overflowed. (timer expired)
 const TICK_TIMER_PERIOD: f32 = 0.5; // in seconds. Decrease for higher measurement precision.
-pub static TICK_OVERFLOW_COUNT: AtomicU32 = AtomicU32::new(0);
 
 pub struct Config {}
 
@@ -134,7 +135,7 @@ fn TIM2() {
 
 #[interrupt]
 /// Increments the tick overflow.
-fn TIM1() {
+fn TIM15() {
     timer::clear_update_interrupt(1);
     TICK_OVERFLOW_COUNT.fetch_add(1, Ordering::Relaxed);
 }
