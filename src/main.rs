@@ -16,13 +16,55 @@ use defmt_rtt as _;
 use panic_probe as _;
 // Import parts of this library we use. You could use this style, or perhaps import
 // less here.
-use hal::{self, low_power, pac};
+use hal::{self, low_power, make_globals, pac};
 
 mod init;
 mod setup;
 mod system_status;
 
+make_globals!(
+    (FLASH, Flash),
+    (TICK_TIMER, Timer<TIM3>),
+    (MAIN_LOOP_TIMER, Timer<TIM2>),
+    // (USB_DEV, UsbDevice<'static, UsbBusType>),
+    // (USB_SERIAL, SerialPort<'static, UsbBusType>),
+    (CONFIG, Config),
+);
+
+// Adjust this based on your MCU's flash, and storage requirements.
+const FLASH_PAGE_ONBOARD: usize = 63;
+
+// We use a hardware counter to measure relative system time. This is the number of times
+// it has overflowed. (timer expired)
+const TICK_TIMER_PERIOD: f32 = 0.5; // in seconds. Decrease for higher measurement precision.
+pub static TICK_OVERFLOW_COUNT: AtomicU32 = AtomicU32::new(0);
+
 pub struct Config {}
+
+impl Config {
+    pub fn from_bytes(buf: &[u8]) -> Self {
+        Self {}
+    }
+
+    pub fn to_bytes(&self) -> [u8; 0] {
+        let mut result = [0; 0];
+        result
+    }
+
+    pub fn save(&self, flash: &mut Flash) {
+        flash.erase_page(Bank::B1, FLASH_PAGE_ONBOARD).ok();
+        flash
+            .write_page(Bank::B1, FLASH_PAGE_ONBOARD, &self.to_bytes())
+            .ok();
+    }
+
+    pub fn load(flash: &mut Flash) -> Self {
+        let mut buf = [0; 0];
+        flash.read(Bank::B1, FLASH_PAGE_ONBOARD, 0, &mut buf);
+
+        Self::from_bytes(&buf)
+    }
+}
 
 // #[rtic::app(device = pac, peripherals = false)]
 // mod app {
