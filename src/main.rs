@@ -8,15 +8,25 @@
 #![no_main]
 #![no_std]
 
+use core::sync::atomic::{AtomicU32, Ordering};
+
 use cortex_m::{self};
-use cortex_m_rt::entry;
+use cortex_m_rt::{entry, interrupt};
 use defmt::println;
 // These lines are part of our setup for debug printing.
 use defmt_rtt as _;
-use panic_probe as _;
 // Import parts of this library we use. You could use this style, or perhaps import
 // less here.
-use hal::{self, low_power, make_globals, pac};
+use hal::{
+    self, access_global,
+    flash::{Bank, Flash},
+    gpio::Pin,
+    low_power, make_globals,
+    pac::{self, TIM1, TIM2},
+    timer,
+    timer::Timer,
+};
+use panic_probe as _;
 
 mod init;
 mod setup;
@@ -113,4 +123,18 @@ fn main() -> ! {
 #[defmt::panic_handler]
 fn panic() -> ! {
     cortex_m::asm::udf()
+}
+
+#[interrupt]
+/// Main loop.
+fn TIM2() {
+    timer::clear_update_interrupt(2);
+    println!("Main loop");
+}
+
+#[interrupt]
+/// Increments the tick overflow.
+fn TIM1() {
+    timer::clear_update_interrupt(1);
+    TICK_OVERFLOW_COUNT.fetch_add(1, Ordering::Relaxed);
 }
