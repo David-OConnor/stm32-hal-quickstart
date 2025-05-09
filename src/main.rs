@@ -8,20 +8,22 @@
 #![no_main]
 #![no_std]
 
-use core::sync::atomic::Ordering;
+use core::{cell::RefCell, sync::atomic::Ordering};
 
 use cortex_m::{self};
 use cortex_m_rt::entry;
-use critical_section::with;
+use critical_section::{Mutex, with};
 use defmt::println;
 // These lines are part of our setup for debug printing.
 use defmt_rtt as _;
 // Import parts of this library we use. You could use this style, or perhaps import
 // less here.
 use hal::{
-    self, gpio, low_power,
-    pac::{self, interrupt},
-    timer::{self, TICK_OVERFLOW_COUNT},
+    self, access_global,
+    flash::{Bank, Flash},
+    gpio, low_power, make_globals,
+    pac::{self, TIM2, TIM15, interrupt},
+    timer::{self, TICK_OVERFLOW_COUNT, Timer},
 };
 use panic_probe as _;
 
@@ -29,7 +31,43 @@ mod init;
 mod setup;
 mod system_status;
 
+make_globals!(
+    (FLASH, Flash),
+    // (SPI_IMU, SpiImu),
+    // (USB_DEV, UsbDevice<'static, UsbBusType>),
+    // (USB_SERIAL, SerialPort<'static, UsbBusType>),
+    (CONFIG, Config),
+);
+
+// Adjust this based on your MCU's flash, and storage requirements.
+const FLASH_PAGE_ONBOARD: usize = 63;
+
 pub struct Config {}
+
+impl Config {
+    pub fn from_bytes(buf: &[u8]) -> Self {
+        Self {}
+    }
+
+    pub fn to_bytes(&self) -> [u8; 0] {
+        let mut result = [0; 0];
+        result
+    }
+
+    pub fn save(&self, flash: &mut Flash) {
+        flash.erase_page(Bank::B1, FLASH_PAGE_ONBOARD).ok();
+        flash
+            .write_page(Bank::B1, FLASH_PAGE_ONBOARD, &self.to_bytes())
+            .ok();
+    }
+
+    pub fn load(flash: &mut Flash) -> Self {
+        let mut buf = [0; 0];
+        flash.read(Bank::B1, FLASH_PAGE_ONBOARD, 0, &mut buf);
+
+        Self::from_bytes(&buf)
+    }
+}
 
 #[entry]
 fn main() -> ! {
@@ -56,7 +94,7 @@ fn TIM2() {
 #[interrupt]
 /// Increments the tick overflow.
 fn TIM15() {
-    timer::clear_update_interrupt(3);
+    timer::clear_update_interrupt(15);
     TICK_OVERFLOW_COUNT.fetch_add(1, Ordering::Relaxed);
 }
 
