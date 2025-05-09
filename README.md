@@ -1,7 +1,7 @@
 # STM32-HAL quickstart
 
 This repo provides a starting point for new [STM32-HAL](https://github.com/David-OConnor/stm32-hal)
-projects. It's based on the [Knurling app template](https://github.com/knurling-rs/app-template).
+projects.
 
 # Quickstart
 - [Install Rust](https://www.rust-lang.org/tools/install).
