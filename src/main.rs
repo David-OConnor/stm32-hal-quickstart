@@ -22,8 +22,8 @@ use hal::{
     self, access_global,
     flash::{Bank, Flash},
     gpio, low_power, make_globals,
-    pac::{self, TIM2, TIM15, interrupt},
-    timer::{self, TICK_OVERFLOW_COUNT, Timer},
+    pac::{interrupt},
+    timer::{self, TICK_OVERFLOW_COUNT},
 };
 use panic_probe as _;
 
@@ -31,6 +31,10 @@ mod init;
 mod setup;
 mod system_status;
 
+// Use this macro to manage global state, controlled with critical section mutexes.
+// Note: There is nothing STM-32-specific about this; if you wish to use this
+// pattern on other MCUs, copy+paste these macros from the HAL's `lib.rs` into
+// your firmware directly.
 make_globals!(
     (FLASH, Flash),
     // (SPI_IMU, SpiImu),
@@ -42,6 +46,7 @@ make_globals!(
 // Adjust this based on your MCU's flash, and storage requirements.
 const FLASH_PAGE_ONBOARD: usize = 63;
 
+/// Used to store application configuration data to and from flash memory.
 pub struct Config {}
 
 impl Config {
@@ -51,6 +56,8 @@ impl Config {
 
     pub fn to_bytes(&self) -> [u8; 0] {
         let mut result = [0; 0];
+        // Update here based on your data.
+
         result
     }
 
@@ -89,6 +96,13 @@ fn main() -> ! {
 fn TIM2() {
     timer::clear_update_interrupt(2);
     println!("Main loop timer");
+
+    with(|cs| {
+        access_global!(CONFIG, config, cs);
+
+        // We now have access to our global config struct in this ISR's
+        // context, as the `config` variable.
+    });
 }
 
 #[interrupt]
@@ -103,9 +117,7 @@ fn TIM15() {
 fn EXTI1() {
     gpio::clear_exti_interrupt(1);
 
-    with(|cs| {
-        // access_global!(SPI_IMU, spi, cs);
-    });
+    // Take action as required, e.g. if a button is pushed.
 }
 
 // same panicking *behavior* as `panic-probe` but doesn't print a panic message

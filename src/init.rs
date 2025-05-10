@@ -4,7 +4,7 @@ use cortex_m::peripheral::NVIC;
 use critical_section::with;
 use hal::{
     clocks::Clocks,
-    dma::{self, Dma},
+    dma::Dma,
     flash::Flash,
     iwdg, pac,
     timer::{Timer, TimerInterrupt},
@@ -57,6 +57,7 @@ pub fn run() {
     // Enable the watchdog with a 0.1s timeout.
     iwdg::setup(0.1);
 
+    // Load values into the global Mutexes.
     with(|cs| {
         FLASH.borrow(cs).replace(Some(flash));
 
@@ -67,13 +68,16 @@ pub fn run() {
         CONFIG.borrow(cs).replace(Some(config));
     });
 
+    // Unmask interrupt lines, and set their priority using Cortex-M's NVIC peripheral.
     unsafe {
+        // NVIC::unmask(pac::Interrupt::SPI1);
         // NVIC::unmask(pac::Interrupt::USB_LP);
-        NVIC::unmask(pac::Interrupt::TIM1_CC);
+        NVIC::unmask(pac::Interrupt::TIM15);
         NVIC::unmask(pac::Interrupt::TIM2);
 
         // Set interrupt priority. See the reference manual's NVIC section for details.
         // Lower value is higher priority.
+        // cp.NVIC.set_priority(pac::Interrupt::SPI1, 2);
         // cp.NVIC.set_priority(pac::Interrupt::USB_LP, 2);
         cp.NVIC.set_priority(pac::Interrupt::TIM15, 8); // Tick
         cp.NVIC.set_priority(pac::Interrupt::TIM2, 7); // Main loop

@@ -1,7 +1,9 @@
 # STM32-HAL quickstart
 
 This repo provides a starting point for new [STM32-HAL](https://github.com/David-OConnor/stm32-hal)
-projects.
+projects. It includes design patterns that are useful for creating embedded applications
+in rust in general, that are not specific to this HAL.
+
 
 # Quickstart
 - [Install Rust](https://www.rust-lang.org/tools/install).
@@ -9,7 +11,7 @@ projects.
 - Install flash and debug tools: `cargo install flip-link`, `cargo install probe-run`.
 - Clone this repo: `git clone https://github.com/David-OConnor/stm32-hal-quickstart`
 - Change the following lines to match your MCU. Post an issue if you need help with this:
-  - `Cargo.toml`: `hal = { package = "stm32-hal2", version = "^1.1.0", features = ["l4x3", "l4rt"] }`
+  - `Cargo.toml`: `hal = { package = "stm32-hal2", version = "^1.9.0", features = ["l4x3", "l4rt"] }`
   - `memory.x`: `FLASH` and `RAM` lines
   - `.cargo/config.toml`: `runner` and `target` lines.
 - Connect your device. Run `cargo run --release` to compile and flash.
