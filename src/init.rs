@@ -8,6 +8,7 @@ use hal::{
     flash::Flash,
     iwdg, pac,
     timer::{Timer, TimerInterrupt},
+    setup_nvic,
 };
 
 use crate::{CONFIG, Config, FLASH, setup};
@@ -69,17 +70,11 @@ pub fn run() {
     });
 
     // Unmask interrupt lines, and set their priority using Cortex-M's NVIC peripheral.
-    unsafe {
-        // NVIC::unmask(pac::Interrupt::SPI1);
-        // NVIC::unmask(pac::Interrupt::USB_LP);
-        NVIC::unmask(pac::Interrupt::TIM15);
-        NVIC::unmask(pac::Interrupt::TIM2);
-
-        // Set interrupt priority. See the reference manual's NVIC section for details.
-        // Lower value is higher priority.
-        // cp.NVIC.set_priority(pac::Interrupt::SPI1, 2);
-        // cp.NVIC.set_priority(pac::Interrupt::USB_LP, 2);
-        cp.NVIC.set_priority(pac::Interrupt::TIM15, 8); // Tick
-        cp.NVIC.set_priority(pac::Interrupt::TIM2, 7); // Main loop
-    }
+    // Lower nubmers are higher priority.
+    setup_nvic!([
+        (TIM15, 8),
+        (TIM2, 7),
+        // (SPI1, 2),
+        // (USB_LP, 2),
+    ], cp);
 }

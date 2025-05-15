@@ -15,7 +15,7 @@ critical-section = "^1.2.0"
 
 
 # Change this import as required for your MCU.
-hal = { package = "stm32-hal2", version = "^1.9.0", features = ["l4x3", "l4rt"]}
+hal = { package = "stm32-hal2", version = "^1.9.1", features = ["l4x3", "l4rt"]}
 
 # cargo build/run
 [profile.dev]
