@@ -22,7 +22,7 @@ use hal::{
     self, access_global,
     flash::{Bank, Flash},
     gpio, low_power, make_globals,
-    pac::{interrupt},
+    pac::interrupt,
     timer::{self, TICK_OVERFLOW_COUNT},
 };
 use panic_probe as _;

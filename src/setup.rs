@@ -39,4 +39,10 @@ pub fn setup_pins() {
 
 pub fn setup_dma() {
     // dma::enable_mux1(); // Only required on some variants, like G4.
+
+    // dma::mux(IMU_DMA_PERIPH, IMU_TX_CH, DmaInput::Spi1Tx);
+    // dma::mux(IMU_DMA_PERIPH, IMU_RX_CH, DmaInput::Spi1Rx);
+    //
+    // dma::mux(GNSS_DMA_PERIPH, GNSS_TX_CH, DmaInput::Usart2Tx);
+    // dma::mux(GNSS_DMA_PERIPH, GNSS_RX_CH, DmaInput::Usart2Rx);
 }
