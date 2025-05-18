@@ -8,6 +8,7 @@ use hal::{
     flash::Flash,
     iwdg, pac, setup_nvic,
     timer::{Timer, TimerInterrupt},
+    init_globals,
 };
 
 use crate::{CONFIG, Config, FLASH, setup};
@@ -57,16 +58,13 @@ pub fn run() {
     // Enable the watchdog with a 0.1s timeout.
     iwdg::setup(0.1);
 
-    // Load values into the global Mutexes.
-    with(|cs| {
-        FLASH.borrow(cs).replace(Some(flash));
-
-        // SPI_IMU.borrow(cs).replace(spi_imu)
-        // USB_DEV.borrow(cs).replace(usb_dev);
-        // USB_SERIAL.borrow(cs).replace(Some(usb_serial));
-
-        CONFIG.borrow(cs).replace(Some(config));
-    });
+    init_globals!(
+        (FLASH, flash),
+        (CONFIG, config),
+        // (SPI_IMU, spi_imu),
+        // (USB_DEV, usb_dev),
+        // (USB_SERIAL, usb_serial),
+    );
 
     // Unmask interrupt lines, and set their priority using Cortex-M's NVIC peripheral.
     // Lower nubmers are higher priority.
