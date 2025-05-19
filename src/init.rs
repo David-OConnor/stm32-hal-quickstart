@@ -78,7 +78,7 @@ pub fn run() {
     // Lower nubmers are higher priority.
     setup_nvic!(
         [
-            // (TIM3, 8),
+            (TIM3, 8),
             (TIM2, 7),
             // (SPI1, 2),
             // (USB_LP, 2),
