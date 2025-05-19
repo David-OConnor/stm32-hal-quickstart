@@ -6,12 +6,12 @@ use hal::{
     clocks::Clocks,
     dma::Dma,
     flash::Flash,
-    iwdg, pac, setup_nvic,
+    init_globals, iwdg, pac, setup_nvic,
+    spi::{BaudRate, Spi, SpiConfig, SpiMode},
     timer::{Timer, TimerInterrupt},
-    init_globals,
 };
 
-use crate::{CONFIG, Config, FLASH, setup};
+use crate::{CONFIG, Config, FLASH, SPI1, setup};
 
 const TICK_TIMER_PERIOD: f32 = 0.5; // in seconds. Decrease for higher measurement precision.
 const MAIN_LOOP_FREQ: f32 = 4.;
@@ -33,6 +33,14 @@ pub fn run() {
 
     let mut flash = Flash::new(dp.FLASH);
     let mut config = Config::load(&mut flash);
+
+    // An example peripheral; configure as-required based on your applicaiton.
+    let spi_cfg = SpiConfig {
+        mode: SpiMode::mode3(),
+        ..Default::default()
+    };
+
+    let spi = Spi::new(dp.SPI1, spi_cfg, BaudRate::Div8);
 
     // We use this timer to maintain a time since bootup.
     // A shorter timeout period will allow higher resolution measurements, while a longer one
@@ -61,7 +69,7 @@ pub fn run() {
     init_globals!(
         (FLASH, flash),
         (CONFIG, config),
-        // (SPI_IMU, spi_imu),
+        (SPI1, spi),
         // (USB_DEV, usb_dev),
         // (USB_SERIAL, usb_serial),
     );
@@ -70,7 +78,7 @@ pub fn run() {
     // Lower nubmers are higher priority.
     setup_nvic!(
         [
-            (TIM15, 8),
+            // (TIM3, 8),
             (TIM2, 7),
             // (SPI1, 2),
             // (USB_LP, 2),

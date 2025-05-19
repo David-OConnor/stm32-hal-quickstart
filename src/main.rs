@@ -16,13 +16,14 @@ use critical_section::{Mutex, with};
 use defmt::println;
 // These lines are part of our setup for debug printing.
 use defmt_rtt as _;
+use hal::spi::Spi;
 // Import parts of this library we use. You could use this style, or perhaps import
 // less here.
 use hal::{
     self, access_global,
     flash::{Bank, Flash},
     gpio, low_power, make_globals,
-    pac::interrupt,
+    pac::{SPI1, interrupt},
     timer::{self, TICK_OVERFLOW_COUNT},
 };
 use panic_probe as _;
@@ -37,7 +38,7 @@ mod system_status;
 // your firmware directly.
 make_globals!(
     (FLASH, Flash),
-    // (SPI_IMU, SpiImu),
+    (SPI1, Spi<SPI1>),
     // (USB_DEV, UsbDevice<'static, UsbBusType>),
     // (USB_SERIAL, SerialPort<'static, UsbBusType>),
     (CONFIG, Config),
@@ -107,8 +108,8 @@ fn TIM2() {
 
 #[interrupt]
 /// Increments the tick overflow.
-fn TIM15() {
-    timer::clear_update_interrupt(15);
+fn TIM3() {
+    timer::clear_update_interrupt(3);
     TICK_OVERFLOW_COUNT.fetch_add(1, Ordering::Relaxed);
 }
 

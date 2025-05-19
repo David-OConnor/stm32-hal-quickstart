@@ -5,17 +5,17 @@ edition = "2024"
 version = "0.1.0"
 
 [dependencies]
-defmt = "^1.0.1"
-defmt-rtt = "^1.0.0"
-panic-probe = { version = "^1.0.0", features = ["print-defmt"] }
+defmt = "1.0.1"
+defmt-rtt = "1.0.0"
+panic-probe = { version = "1.0.0", features = ["print-defmt"] }
 
-cortex-m = {version = "^0.7.7", features = ["critical-section-single-core"]}
-cortex-m-rt = "^0.7.5"
-critical-section = "^1.2.0"
+cortex-m = {version = "0.7.7", features = ["critical-section-single-core"]}
+cortex-m-rt = "0.7.5"
+critical-section = "1.2.0"
 
 
 # Change this import as required for your MCU.
-hal = { package = "stm32-hal2", version = "^1.9.1", features = ["l4x3", "l4rt"]}
+hal = { package = "stm32-hal2", version = "1.9.3", features = ["g431", "g4rt", "usb"]}
 
 # cargo build/run
 [profile.dev]
