@@ -1,6 +1,6 @@
 [target.'cfg(all(target_arch = "arm", target_os = "none"))']
 # Change this runner as required for your MCU.
-runner = "probe-rs run --chip STM32H723ZGTx" # to list chips, run `probe-rs chip list.`
+runner = "probe-rs run --chip STM32G431CBT" # to list chips, run `probe-rs chip list.`
 
 rustflags = [
   "-C", "linker=flip-link",
