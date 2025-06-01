@@ -1,7 +1,6 @@
-//! This example shows a complete project, including file structure, and config
-//! needed to flash using an ST-Link. The project structure is based on
-//! [Knurling's app-template](https://github.com/knurling-rs/app-template).
-//! This file demonstrates an overview of this library's features.
+//! This example shows a template complete project, including file structure, and config
+//! needed to flash using an ST-Link, or USB. It demonstrates initialization of peripherals,
+//! with a minimal project structure. It demonstrates an overview of this library's features.
 
 //! See the syntax example in the main STM32-HAL repo for a more detailed example.
 
