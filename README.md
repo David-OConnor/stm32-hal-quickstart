@@ -4,6 +4,10 @@ This repo provides a starting point for new [STM32-HAL](https://github.com/David
 projects. It includes design patterns that are useful for creating embedded applications
 in rust in general, that are not specific to this HAL.
 
+It demonstrates peripheral initialization, global state, use of interrupts, DMA,
+and how to use the most common peripherals. For details on other peripherals and functionality,
+see the HAL's examples folder, and its rust docs.
+
 
 # Quickstart
 - [Install Rust](https://www.rust-lang.org/tools/install).
