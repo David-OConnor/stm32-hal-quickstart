@@ -51,11 +51,11 @@ const CONFIG_SIZE: usize = 1;
 pub struct Config {}
 
 impl Config {
-    pub fn from_bytes(buf: &[u8]) -> Self {
+    fn from_bytes(buf: &[u8]) -> Self {
         Self {}
     }
 
-    pub fn to_bytes(&self) -> [u8; CONFIG_SIZE] {
+    fn to_bytes(&self) -> [u8; CONFIG_SIZE] {
         let mut result = [0; CONFIG_SIZE];
         // Update here based on your data.
 
