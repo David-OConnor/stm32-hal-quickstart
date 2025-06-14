@@ -46,6 +46,7 @@ make_globals!(
 
 // Adjust this based on your MCU's flash, and storage requirements.
 const FLASH_PAGE_ONBOARD: usize = 63;
+const CONFIG_SIZE: usize = 1;
 
 /// Used to store application configuration data to and from flash memory.
 pub struct Config {}
@@ -55,8 +56,8 @@ impl Config {
         Self {}
     }
 
-    pub fn to_bytes(&self) -> [u8; 0] {
-        let mut result = [0; 0];
+    pub fn to_bytes(&self) -> [u8; CONFIG_SIZE] {
+        let mut result = [0; CONFIG_SIZE];
         // Update here based on your data.
 
         result
@@ -70,7 +71,7 @@ impl Config {
     }
 
     pub fn load(flash: &mut Flash) -> Self {
-        let mut buf = [0; 0];
+        let mut buf = [0; CONFIG_SIZE];
         flash.read(Bank::B1, FLASH_PAGE_ONBOARD, 0, &mut buf);
 
         Self::from_bytes(&buf)
