@@ -7,11 +7,11 @@
 #![no_main]
 #![no_std]
 
-use core::{cell::RefCell, sync::atomic::Ordering};
+use core::sync::atomic::Ordering;
 
-use cortex_m::{self};
+use cortex_m;
 use cortex_m_rt::entry;
-use critical_section::{Mutex, with};
+use critical_section::with;
 use defmt::println;
 // These lines are part of our setup for debug printing.
 use defmt_rtt as _;

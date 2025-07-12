@@ -1,6 +1,5 @@
 //! This module contains initialization code, run once at program start.
 
-use cortex_m::peripheral::NVIC;
 use critical_section::with;
 use hal::{
     clocks::Clocks,

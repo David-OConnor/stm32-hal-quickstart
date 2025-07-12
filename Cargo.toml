@@ -15,7 +15,7 @@ critical-section = "1.2.0"
 
 
 # Change this import as required for your MCU.
-hal = { package = "stm32-hal2", version = "1.9.3", features = ["g431", "g4rt", "usb"]}
+hal = { package = "stm32-hal2", version = "2.0.1", features = ["g431", "g4rt", "usb"]}
 
 
 [profile.dev]
