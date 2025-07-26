@@ -63,7 +63,7 @@ pub fn run() {
     setup::setup_dma();
 
     // Enable the watchdog with a 0.1s timeout.
-    iwdg::setup(0.1);
+    iwdg::setup(0.1).unwrap();
 
     init_globals!(
         (FLASH, flash),

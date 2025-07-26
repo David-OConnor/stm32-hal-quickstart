@@ -63,10 +63,12 @@ impl Config {
     }
 
     pub fn save(&self, flash: &mut Flash) {
-        flash.erase_page(Bank::B1, FLASH_PAGE_ONBOARD).ok();
-        flash
-            .write_page(Bank::B1, FLASH_PAGE_ONBOARD, &self.to_bytes())
-            .ok();
+        if flash.erase_page(Bank::B1, FLASH_PAGE_ONBOARD).is_err() {
+            println!("Error erasing flash");
+        }
+        if let Err(e) = flash.write_page(Bank::B1, FLASH_PAGE_ONBOARD, &self.to_bytes()) {
+            println!("Error writing flash");
+        }
     }
 
     pub fn load(flash: &mut Flash) -> Self {
