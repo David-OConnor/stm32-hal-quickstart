@@ -21,7 +21,7 @@ use hal::spi::Spi;
 use hal::{
     self, access_global,
     flash::{Bank, Flash},
-    gpio, low_power, make_globals,
+    gpio::{self, Edge}, low_power, make_globals,
     pac::{SPI1, interrupt},
     timer::{self, TICK_OVERFLOW_COUNT},
 };
@@ -118,7 +118,7 @@ fn TIM3() {
 #[interrupt]
 /// An EXTI interrupt. (e.g. interrupt pin)
 fn EXTI1() {
-    gpio::clear_exti_interrupt(1);
+    gpio::clear_exti_interrupt(1, Edge::Falling);
 
     // Take action as required, e.g. if a button is pushed.
 }
